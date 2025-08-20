@@ -121,3 +121,27 @@ func sherpaOnnxOnlineRecognizerConfig(
         hotwords_buf_size: Int32(hotwordsBufSize)
     )
 }
+
+func sherpaOnnxSpokenLanguageIdentificationConfig(
+  whisper: SherpaOnnxSpokenLanguageIdentificationWhisperConfig,
+  numThreads: Int = 1,
+  debug: Int = 0,
+  provider: String = "cpu"
+) -> SherpaOnnxSpokenLanguageIdentificationConfig {
+  return SherpaOnnxSpokenLanguageIdentificationConfig(
+    whisper: whisper,
+    num_threads: Int32(numThreads),
+    debug: Int32(debug),
+    provider: toCPointer(provider))
+}
+
+func sherpaOnnxSpokenLanguageIdentificationWhisperConfig(
+  encoder: String,
+  decoder: String,
+  tailPaddings: Int = -1
+) -> SherpaOnnxSpokenLanguageIdentificationWhisperConfig {
+  return SherpaOnnxSpokenLanguageIdentificationWhisperConfig(
+    encoder: toCPointer(encoder),
+    decoder: toCPointer(decoder),
+    tail_paddings: Int32(tailPaddings))
+}
