@@ -35,35 +35,56 @@ func sherpaOnnxOnlineZipformer2CtcModelConfig(
     )
 }
 
+func sherpaOnnxOnlineNemoCtcModelConfig(
+  model: String = ""
+) -> SherpaOnnxOnlineNemoCtcModelConfig {
+  return SherpaOnnxOnlineNemoCtcModelConfig(
+    model: toCPointer(model)
+  )
+}
+
+/// Return an instance of SherpaOnnxOnlineModelConfig.
+///
+/// Please refer to
+/// https://k2-fsa.github.io/sherpa/onnx/pretrained_models/index.html
+/// to download the required `.onnx` files.
+///
+/// - Parameters:
+///   - tokens: Path to tokens.txt
+///   - numThreads:  Number of threads to use for neural network computation.
+///
+/// - Returns: Return an instance of SherpaOnnxOnlineTransducerModelConfig
 func sherpaOnnxOnlineModelConfig(
-    tokens: String,
-    transducer: SherpaOnnxOnlineTransducerModelConfig = sherpaOnnxOnlineTransducerModelConfig(),
-    paraformer: SherpaOnnxOnlineParaformerModelConfig = sherpaOnnxOnlineParaformerModelConfig(),
-    zipformer2Ctc: SherpaOnnxOnlineZipformer2CtcModelConfig =
-        sherpaOnnxOnlineZipformer2CtcModelConfig(),
-    numThreads: Int = 1,
-    provider: String = "cpu",
-    debug: Int = 0,
-    modelType: String = "",
-    modelingUnit: String = "cjkchar",
-    bpeVocab: String = "",
-    tokensBuf: String = "",
-    tokensBufSize: Int = 0
+  tokens: String,
+  transducer: SherpaOnnxOnlineTransducerModelConfig = sherpaOnnxOnlineTransducerModelConfig(),
+  paraformer: SherpaOnnxOnlineParaformerModelConfig = sherpaOnnxOnlineParaformerModelConfig(),
+  zipformer2Ctc: SherpaOnnxOnlineZipformer2CtcModelConfig =
+    sherpaOnnxOnlineZipformer2CtcModelConfig(),
+  numThreads: Int = 1,
+  provider: String = "cpu",
+  debug: Int = 0,
+  modelType: String = "",
+  modelingUnit: String = "cjkchar",
+  bpeVocab: String = "",
+  tokensBuf: String = "",
+  tokensBufSize: Int = 0,
+  nemoCtc: SherpaOnnxOnlineNemoCtcModelConfig = sherpaOnnxOnlineNemoCtcModelConfig()
 ) -> SherpaOnnxOnlineModelConfig {
-    return SherpaOnnxOnlineModelConfig(
-        transducer: transducer,
-        paraformer: paraformer,
-        zipformer2_ctc: zipformer2Ctc,
-        tokens: toCPointer(tokens),
-        num_threads: Int32(numThreads),
-        provider: toCPointer(provider),
-        debug: Int32(debug),
-        model_type: toCPointer(modelType),
-        modeling_unit: toCPointer(modelingUnit),
-        bpe_vocab: toCPointer(bpeVocab),
-        tokens_buf: toCPointer(tokensBuf),
-        tokens_buf_size: Int32(tokensBufSize)
-    )
+  return SherpaOnnxOnlineModelConfig(
+    transducer: transducer,
+    paraformer: paraformer,
+    zipformer2_ctc: zipformer2Ctc,
+    tokens: toCPointer(tokens),
+    num_threads: Int32(numThreads),
+    provider: toCPointer(provider),
+    debug: Int32(debug),
+    model_type: toCPointer(modelType),
+    modeling_unit: toCPointer(modelingUnit),
+    bpe_vocab: toCPointer(bpeVocab),
+    tokens_buf: toCPointer(tokensBuf),
+    tokens_buf_size: Int32(tokensBufSize),
+    nemo_ctc: nemoCtc
+  )
 }
 
 func sherpaOnnxFeatureConfig(
@@ -84,42 +105,55 @@ func sherpaOnnxOnlineCtcFstDecoderConfig(
         max_active: Int32(maxActive))
 }
 
+func sherpaOnnxHomophoneReplacerConfig(
+  dictDir: String = "",
+  lexicon: String = "",
+  ruleFsts: String = ""
+) -> SherpaOnnxHomophoneReplacerConfig {
+  return SherpaOnnxHomophoneReplacerConfig(
+    dict_dir: toCPointer(dictDir),
+    lexicon: toCPointer(lexicon),
+    rule_fsts: toCPointer(ruleFsts))
+}
+
 func sherpaOnnxOnlineRecognizerConfig(
-    featConfig: SherpaOnnxFeatureConfig,
-    modelConfig: SherpaOnnxOnlineModelConfig,
-    enableEndpoint: Bool = false,
-    rule1MinTrailingSilence: Float = 2.4,
-    rule2MinTrailingSilence: Float = 1.2,
-    rule3MinUtteranceLength: Float = 30,
-    decodingMethod: String = "greedy_search",
-    maxActivePaths: Int = 4,
-    hotwordsFile: String = "",
-    hotwordsScore: Float = 1.5,
-    ctcFstDecoderConfig: SherpaOnnxOnlineCtcFstDecoderConfig = sherpaOnnxOnlineCtcFstDecoderConfig(),
-    ruleFsts: String = "",
-    ruleFars: String = "",
-    blankPenalty: Float = 0.0,
-    hotwordsBuf: String = "",
-    hotwordsBufSize: Int = 0
+  featConfig: SherpaOnnxFeatureConfig,
+  modelConfig: SherpaOnnxOnlineModelConfig,
+  enableEndpoint: Bool = false,
+  rule1MinTrailingSilence: Float = 2.4,
+  rule2MinTrailingSilence: Float = 1.2,
+  rule3MinUtteranceLength: Float = 30,
+  decodingMethod: String = "greedy_search",
+  maxActivePaths: Int = 4,
+  hotwordsFile: String = "",
+  hotwordsScore: Float = 1.5,
+  ctcFstDecoderConfig: SherpaOnnxOnlineCtcFstDecoderConfig = sherpaOnnxOnlineCtcFstDecoderConfig(),
+  ruleFsts: String = "",
+  ruleFars: String = "",
+  blankPenalty: Float = 0.0,
+  hotwordsBuf: String = "",
+  hotwordsBufSize: Int = 0,
+  hr: SherpaOnnxHomophoneReplacerConfig = sherpaOnnxHomophoneReplacerConfig()
 ) -> SherpaOnnxOnlineRecognizerConfig {
-    return SherpaOnnxOnlineRecognizerConfig(
-        feat_config: featConfig,
-        model_config: modelConfig,
-        decoding_method: toCPointer(decodingMethod),
-        max_active_paths: Int32(maxActivePaths),
-        enable_endpoint: enableEndpoint ? 1 : 0,
-        rule1_min_trailing_silence: rule1MinTrailingSilence,
-        rule2_min_trailing_silence: rule2MinTrailingSilence,
-        rule3_min_utterance_length: rule3MinUtteranceLength,
-        hotwords_file: toCPointer(hotwordsFile),
-        hotwords_score: hotwordsScore,
-        ctc_fst_decoder_config: ctcFstDecoderConfig,
-        rule_fsts: toCPointer(ruleFsts),
-        rule_fars: toCPointer(ruleFars),
-        blank_penalty: blankPenalty,
-        hotwords_buf: toCPointer(hotwordsBuf),
-        hotwords_buf_size: Int32(hotwordsBufSize)
-    )
+  return SherpaOnnxOnlineRecognizerConfig(
+    feat_config: featConfig,
+    model_config: modelConfig,
+    decoding_method: toCPointer(decodingMethod),
+    max_active_paths: Int32(maxActivePaths),
+    enable_endpoint: enableEndpoint ? 1 : 0,
+    rule1_min_trailing_silence: rule1MinTrailingSilence,
+    rule2_min_trailing_silence: rule2MinTrailingSilence,
+    rule3_min_utterance_length: rule3MinUtteranceLength,
+    hotwords_file: toCPointer(hotwordsFile),
+    hotwords_score: hotwordsScore,
+    ctc_fst_decoder_config: ctcFstDecoderConfig,
+    rule_fsts: toCPointer(ruleFsts),
+    rule_fars: toCPointer(ruleFars),
+    blank_penalty: blankPenalty,
+    hotwords_buf: toCPointer(hotwordsBuf),
+    hotwords_buf_size: Int32(hotwordsBufSize),
+    hr: hr
+  )
 }
 
 func sherpaOnnxSpokenLanguageIdentificationConfig(
@@ -144,4 +178,12 @@ func sherpaOnnxSpokenLanguageIdentificationWhisperConfig(
     encoder: toCPointer(encoder),
     decoder: toCPointer(decoder),
     tail_paddings: Int32(tailPaddings))
+}
+
+func sherpaOnnxOfflineZipformerCtcModelConfig(
+  model: String = ""
+) -> SherpaOnnxOfflineZipformerCtcModelConfig {
+  return SherpaOnnxOfflineZipformerCtcModelConfig(
+    model: toCPointer(model)
+  )
 }

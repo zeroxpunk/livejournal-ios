@@ -98,66 +98,99 @@ func sherpaOnnxOfflineLMConfig(
     )
 }
 
+func sherpaOnnxOfflineCanaryModelConfig(
+  encoder: String = "",
+  decoder: String = "",
+  srcLang: String = "en",
+  tgtLang: String = "en",
+  usePnc: Bool = true
+) -> SherpaOnnxOfflineCanaryModelConfig {
+  return SherpaOnnxOfflineCanaryModelConfig(
+    encoder: toCPointer(encoder),
+    decoder: toCPointer(decoder),
+    src_lang: toCPointer(srcLang),
+    tgt_lang: toCPointer(tgtLang),
+    use_pnc: usePnc ? 1 : 0
+  )
+}
+
 func sherpaOnnxOfflineModelConfig(
-    tokens: String,
-    transducer: SherpaOnnxOfflineTransducerModelConfig = sherpaOnnxOfflineTransducerModelConfig(),
-    paraformer: SherpaOnnxOfflineParaformerModelConfig = sherpaOnnxOfflineParaformerModelConfig(),
-    nemoCtc: SherpaOnnxOfflineNemoEncDecCtcModelConfig = sherpaOnnxOfflineNemoEncDecCtcModelConfig(),
-    whisper: SherpaOnnxOfflineWhisperModelConfig = sherpaOnnxOfflineWhisperModelConfig(),
-    tdnn: SherpaOnnxOfflineTdnnModelConfig = sherpaOnnxOfflineTdnnModelConfig(),
-    numThreads: Int = 1,
-    provider: String = "cpu",
-    debug: Int = 0,
-    modelType: String = "",
-    modelingUnit: String = "cjkchar",
-    bpeVocab: String = "",
-    teleSpeechCtc: String = "",
-    senseVoice: SherpaOnnxOfflineSenseVoiceModelConfig = sherpaOnnxOfflineSenseVoiceModelConfig(),
-    moonshine: SherpaOnnxOfflineMoonshineModelConfig = sherpaOnnxOfflineMoonshineModelConfig(),
-    fireRedAsr: SherpaOnnxOfflineFireRedAsrModelConfig = sherpaOnnxOfflineFireRedAsrModelConfig()
+  tokens: String,
+  transducer: SherpaOnnxOfflineTransducerModelConfig = sherpaOnnxOfflineTransducerModelConfig(),
+  paraformer: SherpaOnnxOfflineParaformerModelConfig = sherpaOnnxOfflineParaformerModelConfig(),
+  nemoCtc: SherpaOnnxOfflineNemoEncDecCtcModelConfig = sherpaOnnxOfflineNemoEncDecCtcModelConfig(),
+  whisper: SherpaOnnxOfflineWhisperModelConfig = sherpaOnnxOfflineWhisperModelConfig(),
+  tdnn: SherpaOnnxOfflineTdnnModelConfig = sherpaOnnxOfflineTdnnModelConfig(),
+  numThreads: Int = 1,
+  provider: String = "cpu",
+  debug: Int = 0,
+  modelType: String = "",
+  modelingUnit: String = "cjkchar",
+  bpeVocab: String = "",
+  teleSpeechCtc: String = "",
+  senseVoice: SherpaOnnxOfflineSenseVoiceModelConfig = sherpaOnnxOfflineSenseVoiceModelConfig(),
+  moonshine: SherpaOnnxOfflineMoonshineModelConfig = sherpaOnnxOfflineMoonshineModelConfig(),
+  fireRedAsr: SherpaOnnxOfflineFireRedAsrModelConfig = sherpaOnnxOfflineFireRedAsrModelConfig(),
+  dolphin: SherpaOnnxOfflineDolphinModelConfig = sherpaOnnxOfflineDolphinModelConfig(),
+  zipformerCtc: SherpaOnnxOfflineZipformerCtcModelConfig =
+    sherpaOnnxOfflineZipformerCtcModelConfig(),
+  canary: SherpaOnnxOfflineCanaryModelConfig = sherpaOnnxOfflineCanaryModelConfig()
 ) -> SherpaOnnxOfflineModelConfig {
-    return SherpaOnnxOfflineModelConfig(
-        transducer: transducer,
-        paraformer: paraformer,
-        nemo_ctc: nemoCtc,
-        whisper: whisper,
-        tdnn: tdnn,
-        tokens: toCPointer(tokens),
-        num_threads: Int32(numThreads),
-        debug: Int32(debug),
-        provider: toCPointer(provider),
-        model_type: toCPointer(modelType),
-        modeling_unit: toCPointer(modelingUnit),
-        bpe_vocab: toCPointer(bpeVocab),
-        telespeech_ctc: toCPointer(teleSpeechCtc),
-        sense_voice: senseVoice,
-        moonshine: moonshine,
-        fire_red_asr: fireRedAsr
-    )
+  return SherpaOnnxOfflineModelConfig(
+    transducer: transducer,
+    paraformer: paraformer,
+    nemo_ctc: nemoCtc,
+    whisper: whisper,
+    tdnn: tdnn,
+    tokens: toCPointer(tokens),
+    num_threads: Int32(numThreads),
+    debug: Int32(debug),
+    provider: toCPointer(provider),
+    model_type: toCPointer(modelType),
+    modeling_unit: toCPointer(modelingUnit),
+    bpe_vocab: toCPointer(bpeVocab),
+    telespeech_ctc: toCPointer(teleSpeechCtc),
+    sense_voice: senseVoice,
+    moonshine: moonshine,
+    fire_red_asr: fireRedAsr,
+    dolphin: dolphin,
+    zipformer_ctc: zipformerCtc,
+    canary: canary
+  )
 }
 
 func sherpaOnnxOfflineRecognizerConfig(
-    featConfig: SherpaOnnxFeatureConfig,
-    modelConfig: SherpaOnnxOfflineModelConfig,
-    lmConfig: SherpaOnnxOfflineLMConfig = sherpaOnnxOfflineLMConfig(),
-    decodingMethod: String = "greedy_search",
-    maxActivePaths: Int = 4,
-    hotwordsFile: String = "",
-    hotwordsScore: Float = 1.5,
-    ruleFsts: String = "",
-    ruleFars: String = "",
-    blankPenalty: Float = 0.0
+  featConfig: SherpaOnnxFeatureConfig,
+  modelConfig: SherpaOnnxOfflineModelConfig,
+  lmConfig: SherpaOnnxOfflineLMConfig = sherpaOnnxOfflineLMConfig(),
+  decodingMethod: String = "greedy_search",
+  maxActivePaths: Int = 4,
+  hotwordsFile: String = "",
+  hotwordsScore: Float = 1.5,
+  ruleFsts: String = "",
+  ruleFars: String = "",
+  blankPenalty: Float = 0.0,
+  hr: SherpaOnnxHomophoneReplacerConfig = sherpaOnnxHomophoneReplacerConfig()
 ) -> SherpaOnnxOfflineRecognizerConfig {
-    return SherpaOnnxOfflineRecognizerConfig(
-        feat_config: featConfig,
-        model_config: modelConfig,
-        lm_config: lmConfig,
-        decoding_method: toCPointer(decodingMethod),
-        max_active_paths: Int32(maxActivePaths),
-        hotwords_file: toCPointer(hotwordsFile),
-        hotwords_score: hotwordsScore,
-        rule_fsts: toCPointer(ruleFsts),
-        rule_fars: toCPointer(ruleFars),
-        blank_penalty: blankPenalty
-    )
+  return SherpaOnnxOfflineRecognizerConfig(
+    feat_config: featConfig,
+    model_config: modelConfig,
+    lm_config: lmConfig,
+    decoding_method: toCPointer(decodingMethod),
+    max_active_paths: Int32(maxActivePaths),
+    hotwords_file: toCPointer(hotwordsFile),
+    hotwords_score: hotwordsScore,
+    rule_fsts: toCPointer(ruleFsts),
+    rule_fars: toCPointer(ruleFars),
+    blank_penalty: blankPenalty,
+    hr: hr
+  )
+}
+
+func sherpaOnnxOfflineDolphinModelConfig(
+  model: String = ""
+) -> SherpaOnnxOfflineDolphinModelConfig {
+  return SherpaOnnxOfflineDolphinModelConfig(
+    model: toCPointer(model)
+  )
 }
