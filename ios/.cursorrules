@@ -1,0 +1,91 @@
+# Cursor Rules
+
+## Language & Platform
+- **Target**: iOS 17.5+ minimum
+- **Language**: Swift 5.x with strict concurrency (`SWIFT_STRICT_CONCURRENCY=complete`)
+- **Swift Features**: Enable upcoming features for future compatibility
+
+## Architecture
+- **Structure**: Multi-module architecture
+- **Module Organization**:
+  - `Interface/` - Public protocols and models
+  - `Sources/` - Implementation
+  - `Tests/` - Unit and snapshot tests
+  - `UI/` - Views and ViewControllers
+  - `Mocks/` - Test doubles
+
+## Code Style
+
+### General
+- No comments in code
+
+### Swift
+- Use SwiftFormat and SwiftLint for consistency
+- Prefer `self` only in init methods
+- Inline pattern matching (`let` statements)
+- No redundant type annotations
+- No trailing closures for multi-line statements
+
+### Naming
+- Protocols suffixed with `Protocol` (e.g., `ServiceProtocol`)
+- Test doubles prefixed with `Mock`
+- Use descriptive names over abbreviations
+
+## UI Development
+- **Primary**: SwiftUI for new features
+- **MVVM Pattern**: ViewModels marked with `@MainActor`
+- **Navigation**: Router pattern for scene transitions
+
+## Concurrency
+### Modern Swift Concurrency
+- **Sendable Conformance**: Required for types crossing actor boundaries
+- **Main Actor**: UI layer, ViewModels, and Routers
+- **Async/Await**: Preferred for new code
+- **Task Management**: Structured concurrency with proper cancellation
+- **Isolation**: Use `nonisolated` for specific methods when needed
+
+### RxSwift (Legacy/Existing)
+- **Schedulers**: Use `SerialDispatchQueueScheduler` for thread-safe state
+- **Main Thread**: `MainScheduler.instance` for UI updates
+- **Disposal**: Proper `DisposeBag` management in ViewModels
+- **Operators**: Leverage operators for complex async flows
+- **Bridge**: Use `Rx+Combine` utilities for interop when needed
+
+### Thread Safety Patterns
+- **Services with State**: Mark `@unchecked Sendable` when using RxSwift schedulers
+- **Immutable Models**: Prefer `struct` with `Sendable` conformance
+- **Shared State**: Protected via `SerialDispatchQueueScheduler` or actors
+
+## Dependency Management
+- **Injection**: Constructor injection preferred
+- **Test Dependencies**: Provide mock implementations
+- **External**: Managed via Swift Package Manager
+
+## Testing
+- **Unit Tests**: For business logic
+- **Snapshot Tests**: For UI components
+- **Test Helpers**: Shared utilities in dedicated folders
+- **Mocks**: Auto-generated where possible
+
+## Error Handling
+- **Custom Errors**: Define domain-specific error types
+- **Assertions**: Use custom `Assert()` for non-fatal checks
+- **Logging**: Structured logging with appropriate levels
+
+## Best Practices
+- **No Force Unwrapping**: Use optional binding or nil-coalescing
+- **No Force Casting**: Use conditional casting
+- **Memory Management**: Weak references for delegates and closures
+- **Access Control**: Explicit public/internal/private modifiers
+- **Documentation**: Document public APIs and complex logic
+
+## Build Configuration
+- **Debug**: Development with assertions enabled
+- **Release**: Production optimized
+- **Release AppStore**: App Store distribution
+
+## File Organization
+- Group related functionality
+- One type per file (exceptions for small related types)
+- Tests mirror source structure
+- Resources in dedicated folders

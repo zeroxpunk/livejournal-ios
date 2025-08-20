@@ -1,0 +1,67 @@
+.git
+.DS_Store
+.idea
+*/.idea
+xcuserdata
+
+fastlane/report.xml
+fastlane/test_output
+fastlane/signing-artifacts
+fastlane/output-artifacts
+fastlane/build-artifacts
+fastlane/derived-data
+fastlane/artifacts/
+
+timeline.xctimeline
+
+vendor
+.bundle
+
+ios.xcodeproj
+ios.xcworkspace/**
+!ios.xcworkspace/xcshareddata/
+!ios.xcworkspace/xcshareddata/swiftpm
+!ios.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+onnxruntime.xcframework
+sherpa-onnx.xcframework
+
+AutoMockable.generated.swift
+SwiftUIPreviews.generated.swift
+
+.build
+Tuist/.build
+.rugby
+.swiftpm
+
+Tools/.swiftpm/
+Tools/.vscode/
+
+# Tuist
+Tuist/Dependencies/
+graph.dot
+graph.json
+graph.png
+graph.svg
+Derived/
+Manifests.xcodeproj
+Manifests.xcworkspace
+Tuist/ProjectDescriptionHelpers/TargetsHelper+Generated.swift
+
+# Local SPM
+App/Modules/**/.build
+App/Modules/**/Packages/
+App/Modules/**/*.xcodeproj
+App/Modules/**/xcuserdata/
+App/Modules/**/DerivedData/
+App/Modules/**/.swiftpm/
+
+# Mise
+.mise.local.toml
+.mise.*.local.toml
+
+# LSP
+/buildServer.json
+
+# Aider
+.aider*
