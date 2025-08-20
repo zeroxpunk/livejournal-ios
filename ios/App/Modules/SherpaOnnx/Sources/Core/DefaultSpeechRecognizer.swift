@@ -44,6 +44,18 @@ final class DefaultSpeechRecognizer: SpeechRecognitionProtocol, @unchecked Senda
                 numThreads: config.numThreads,
                 provider: "cpu"
             )
+        } else if config.modelType == "zipformer" {
+            let transducerConfig = sherpaOnnxOfflineTransducerModelConfig(
+                encoder: config.encoderPath ?? "",
+                decoder: config.decoderPath  ?? "",
+                joiner: config.joinerPath  ?? ""
+            )
+            modelConfig = sherpaOnnxOfflineModelConfig(
+                tokens: config.tokensPath,
+                transducer: transducerConfig,
+                debug: 0,
+                modelType: "zipformer"
+            )
         } else {
             return nil
         }
