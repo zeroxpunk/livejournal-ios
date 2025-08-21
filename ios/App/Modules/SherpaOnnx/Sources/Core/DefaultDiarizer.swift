@@ -21,23 +21,27 @@ public struct DefaultDiarizer: DiarizerProtocol {
     public func diarize(audio: AudioData, numSpeakers: Int?, knownSpeakers: [SpeakerEmbedding]) async throws -> [DiarizationSegment] {
         let processedAudio = await audioProcessor.resample(audio, to: 16000)
         
-        var diarizationConfig = sherpaOnnxOfflineSpeakerDiarizationConfig(
+        guard let diarizationConfig = config.speechDiarizationConfig else {
+            throw SherpaError.configurationError("Speech diarization configuration is missing")
+        }
+        
+        var sherpaConfig = sherpaOnnxOfflineSpeakerDiarizationConfig(
             segmentation: sherpaOnnxOfflineSpeakerSegmentationModelConfig(
                 pyannote: sherpaOnnxOfflineSpeakerSegmentationPyannoteModelConfig(
-                    model: config.segmentationModelPath
+                    model: diarizationConfig.segmentationModelPath
                 )
             ),
             embedding: sherpaOnnxSpeakerEmbeddingExtractorConfig(
-                model: config.embeddingModelPath,
-                numThreads: config.numThreads,
-                provider: config.provider
+                model: diarizationConfig.embeddingModelPath,
+                numThreads: diarizationConfig.numThreads,
+                provider: diarizationConfig.provider
             ),
             clustering: sherpaOnnxFastClusteringConfig(
                 numClusters: numSpeakers ?? -1
             )
         )
         
-        let diarizer = SherpaOnnxOfflineSpeakerDiarizationWrapper(config: &diarizationConfig)
+        let diarizer = SherpaOnnxOfflineSpeakerDiarizationWrapper(config: &sherpaConfig)
         let rawSegments = diarizer.process(samples: processedAudio.samples)
         
         var segments = rawSegments.map { segment in

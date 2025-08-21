@@ -1,8 +1,7 @@
 import Foundation
 
 public struct SherpaConfig: Sendable {
-    public let segmentationModelPath: String
-    public let embeddingModelPath: String
+    public let speechDiarizationConfig: SpeechDiarizationConfig?
     public let numThreads: Int
     public let provider: String
     public let identityThreshold: Float
@@ -10,21 +9,38 @@ public struct SherpaConfig: Sendable {
     public let speechRecognitionConfigs: [String: SpeechRecognitionConfig]
     
     public init(
-        segmentationModelPath: String,
-        embeddingModelPath: String,
+        speechDiarizationConfig: SpeechDiarizationConfig? = nil,
         numThreads: Int = 1,
         provider: String = "cpu",
         identityThreshold: Float = 0.4,
         languageDetectionConfig: LanguageDetectionConfig? = nil,
         speechRecognitionConfigs: [String: SpeechRecognitionConfig] = [:]
     ) {
-        self.segmentationModelPath = segmentationModelPath
-        self.embeddingModelPath = embeddingModelPath
+        self.speechDiarizationConfig = speechDiarizationConfig
         self.numThreads = numThreads
         self.provider = provider
         self.identityThreshold = identityThreshold
         self.languageDetectionConfig = languageDetectionConfig
         self.speechRecognitionConfigs = speechRecognitionConfigs
+    }
+}
+
+public struct SpeechDiarizationConfig: Sendable {
+    public let segmentationModelPath: String
+    public let embeddingModelPath: String
+    public let numThreads: Int
+    public let provider: String
+    
+    public init(
+        segmentationModelPath: String,
+        embeddingModelPath: String,
+        numThreads: Int = 1,
+        provider: String = "cpu"
+    ) {
+        self.segmentationModelPath = segmentationModelPath
+        self.embeddingModelPath = embeddingModelPath
+        self.numThreads = numThreads
+        self.provider = provider
     }
 }
 

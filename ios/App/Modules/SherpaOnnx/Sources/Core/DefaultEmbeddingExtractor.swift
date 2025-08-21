@@ -8,10 +8,14 @@ public struct DefaultEmbeddingExtractor: EmbeddingExtractorProtocol {
     }
     
     public func extract(from audio: AudioData) async -> [Float]? {
+        guard let diarizationConfig = config.speechDiarizationConfig else {
+            return nil
+        }
+        
         var extractorConfig = sherpaOnnxSpeakerEmbeddingExtractorConfig(
-            model: config.embeddingModelPath,
-            numThreads: config.numThreads,
-            provider: config.provider
+            model: diarizationConfig.embeddingModelPath,
+            numThreads: diarizationConfig.numThreads,
+            provider: diarizationConfig.provider
         )
         
         let extractor = SherpaOnnxSpeakerEmbeddingExtractorWrapper(config: &extractorConfig)
