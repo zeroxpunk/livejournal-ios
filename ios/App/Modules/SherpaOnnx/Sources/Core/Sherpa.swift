@@ -10,7 +10,7 @@ public struct Sherpa {
     private let speechRecognizer: SpeechRecognitionProtocol?
     
     public init(
-        config: SherpaConfig,
+        config: SherpaConfig = SherpaConfig(),
         audioProcessor: AudioProcessorProtocol? = nil,
         embeddingExtractor: EmbeddingExtractorProtocol? = nil,
         speakerMatcher: SpeakerMatcherProtocol? = nil,

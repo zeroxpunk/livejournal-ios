@@ -9,19 +9,33 @@ public struct SherpaConfig: Sendable {
     public let speechRecognitionConfigs: [String: SpeechRecognitionConfig]
     
     public init(
-        speechDiarizationConfig: SpeechDiarizationConfig? = nil,
         numThreads: Int = 1,
         provider: String = "cpu",
         identityThreshold: Float = 0.4,
+        speechDiarizationConfig: SpeechDiarizationConfig? = nil,
         languageDetectionConfig: LanguageDetectionConfig? = nil,
         speechRecognitionConfigs: [String: SpeechRecognitionConfig] = [:]
     ) {
-        self.speechDiarizationConfig = speechDiarizationConfig
         self.numThreads = numThreads
         self.provider = provider
         self.identityThreshold = identityThreshold
-        self.languageDetectionConfig = languageDetectionConfig
-        self.speechRecognitionConfigs = speechRecognitionConfigs
+        self.speechDiarizationConfig = speechDiarizationConfig ?? SpeechDiarizationModel.createConfig(numThreads: numThreads)
+        self.languageDetectionConfig = languageDetectionConfig ?? LanguageDetectionModel.createConfig(numThreads: numThreads)
+        self.speechRecognitionConfigs = speechRecognitionConfigs.isEmpty ? Self.defaultSpeechRecognitionConfigs(numThreads: numThreads) : speechRecognitionConfigs
+    }
+    
+    private static func defaultSpeechRecognitionConfigs(numThreads: Int) -> [String: SpeechRecognitionConfig] {
+        var configs: [String: SpeechRecognitionConfig] = [:]
+        
+        if let ruConfig = SpeechToTextModel.createConfig(for: "ru", numThreads: numThreads) {
+            configs["ru"] = ruConfig
+        }
+        
+        if let enConfig = SpeechToTextModel.createConfig(for: "en", numThreads: numThreads) {
+            configs["en"] = enConfig
+        }
+        
+        return configs
     }
 }
 
