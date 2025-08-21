@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SpeakerEmbedding: Sendable {
+public struct SpeakerEmbedding: Sendable, Codable {
     public let id: String
     public let name: String
     public let embedding: [Float]
