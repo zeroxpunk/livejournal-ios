@@ -38,17 +38,17 @@ final class OnDeviceLLM: LLMProtocol {
     
     nonisolated func completions(messages: [Message]) async throws -> String {
         let prompt = formatMessages(messages)
-        await MainActor.run {
+        try await MainActor.run {
             try session.addQueryChunk(inputText: prompt)
         }
-        return await MainActor.run {
+        return try await MainActor.run {
             try session.generateResponse()
         }
     }
     
     nonisolated func completionsStream(messages: [Message]) async throws -> AsyncThrowingStream<String, Error> {
         let prompt = formatMessages(messages)
-        await MainActor.run {
+        try await MainActor.run {
             try session.addQueryChunk(inputText: prompt)
         }
         return await MainActor.run {
