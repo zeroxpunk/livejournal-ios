@@ -5,6 +5,8 @@ import MediaPipeTasksGenAI
 final class OnDeviceLLM: LLMProtocol {
     private let inference: LlmInference
     private let session: LlmInference.Session
+    private let maxTokens: Int
+    private let decodeTokenOffset: Int = 256
     
     init(
         model: LLMModel,
@@ -13,6 +15,7 @@ final class OnDeviceLLM: LLMProtocol {
         topP: Float,
         maxTokens: Int
     ) async throws {
+        self.maxTokens = maxTokens
         let modelPath = try await Self.setupModel(model: model)
         
         let options = LlmInference.Options(modelPath: modelPath.path)
@@ -38,7 +41,9 @@ final class OnDeviceLLM: LLMProtocol {
     
     nonisolated func completions(messages: [Message]) async throws -> String {
         let prompt = formatMessages(messages)
+        
         try await MainActor.run {
+            try validateContextWindow(prompt: prompt, messageCount: messages.count)
             try session.addQueryChunk(inputText: prompt)
         }
         return try await MainActor.run {
@@ -48,12 +53,46 @@ final class OnDeviceLLM: LLMProtocol {
     
     nonisolated func completionsStream(messages: [Message]) async throws -> AsyncThrowingStream<String, Error> {
         let prompt = formatMessages(messages)
+        
         try await MainActor.run {
+            try validateContextWindow(prompt: prompt, messageCount: messages.count)
             try session.addQueryChunk(inputText: prompt)
         }
         return await MainActor.run {
             session.generateResponseAsync()
         }
+    }
+    
+    private func validateContextWindow(prompt: String, messageCount: Int) throws {
+        guard let tokenCount = estimateTokenCount(text: prompt, messageCount: messageCount) else {
+            throw LLMError.initializationFailed("Failed to estimate token count")
+        }
+        
+        let availableTokens = maxTokens - decodeTokenOffset
+        if tokenCount > availableTokens {
+            throw LLMError.contextWindowExceeded(current: tokenCount, max: availableTokens)
+        }
+    }
+    
+    private func estimateTokenCount(text: String, messageCount: Int) -> Int? {
+        guard !text.isEmpty else { return 0 }
+        
+        do {
+            let textTokenCount = try session.sizeInTokens(text: text)
+            let approximateControlTokensCount = messageCount * 3
+            return textTokenCount + approximateControlTokensCount
+        } catch {
+            return nil
+        }
+    }
+    
+    func estimateTokensRemaining(messages: [Message]) -> Int? {
+        let prompt = formatMessages(messages)
+        guard let tokenCount = estimateTokenCount(text: prompt, messageCount: messages.count) else {
+            return nil
+        }
+        
+        return max(0, maxTokens - decodeTokenOffset - tokenCount)
     }
     
     private nonisolated func formatMessages(_ messages: [Message]) -> String {
