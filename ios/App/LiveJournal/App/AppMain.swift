@@ -4,7 +4,7 @@ import SwiftUI
 struct LiveJournalApp: App {
     var body: some Scene {
         WindowGroup {
-            ChatView()
+//             ChatView()
         }
     }
 }
