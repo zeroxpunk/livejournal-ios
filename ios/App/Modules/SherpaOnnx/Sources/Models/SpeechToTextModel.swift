@@ -21,7 +21,7 @@ public enum SpeechToTextModel {
                 encoderPath: encoderPath,
                 decoderPath: decoderPath,
                 joinerPath: joinerPath,
-                modelType: "zipformer",
+                modelType: "transducer",
                 sampleRate: 16000,
                 featureDim: 80,
                 numThreads: numThreads
